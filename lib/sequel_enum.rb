@@ -8,7 +8,7 @@ module Sequel
 
       module ClassMethods
         def enums
-          @enums ||= {}
+          @enums ||= Hashr.new
         end
 
         def enum(column, full_values)
@@ -24,7 +24,7 @@ module Sequel
           end
 
           define_method "#{column}=" do |value|
-            val = self.class.enums[column].assoc(value.to_s.downcase)
+            val = values.assoc(value.to_s.downcase)
             if val
               self[column] = val && val.last
             else
@@ -33,7 +33,7 @@ module Sequel
           end
 
           define_method column do
-            val = self.class.enums[column].rassoc(self[column])
+            val = values.rassoc(self[column])
             val && val.first
           end
 
@@ -44,7 +44,6 @@ module Sequel
           end
 
           self.enums[column] = values
-          self.enums["#{column}_array".to_sym] = full_values
           self.enums["#{column}_keys".to_sym] = Hash[full_values.map {|x| [x[0].to_s.upcase, x[1]] }]
         end
       end
