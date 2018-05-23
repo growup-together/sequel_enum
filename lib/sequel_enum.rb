@@ -1,3 +1,5 @@
+require 'hashr'
+
 module Sequel
   module Plugins
     module Enum
@@ -12,7 +14,7 @@ module Sequel
 
         def enum(column, full_values)
           if full_values.is_a? Hash
-            values.each do |key, val|
+            full_values.each do |key, val|
               fail ArgumentError, "value should be an integer, #{val} provided which it's a #{val.class}" unless val.is_a? Integer
             end
           elsif full_values.is_a? Array
