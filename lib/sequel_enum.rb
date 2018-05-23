@@ -17,6 +17,7 @@ module Sequel
             full_values.each do |key, val|
               fail ArgumentError, "value should be an integer, #{val} provided which it's a #{val.class}" unless val.is_a? Integer
             end
+            values = full_values
           elsif full_values.is_a? Array
             values = Hash[full_values.map {|x| [x[0], x[2]] }]
           else
@@ -25,7 +26,11 @@ module Sequel
 
           define_method "#{column}=" do |value|
             val = self.class.enums[column].assoc(value.to_s.downcase)
-            self[column] = val && val.last
+            if val
+              self[column] = val && val.last
+            else
+              fail 'invalid value is provided.'
+            end
           end
 
           define_method column do
