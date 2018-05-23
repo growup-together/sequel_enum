@@ -22,7 +22,7 @@ module Sequel
           end
 
           define_method "#{column}=" do |value|
-            val = self.class.enums[column].assoc(value.to_s)
+            val = self.class.enums[column].assoc(value.to_s.downcase)
             self[column] = val && val.last
           end
 
@@ -39,7 +39,7 @@ module Sequel
 
           self.enums[column] = values
           self.enums["#{column}_array".to_sym] = full_values
-          self.enums["#{column}_keys".to_sym] = Hash[full_values.map {|x| [x[0], x[1]] }]
+          self.enums["#{column}_keys".to_sym] = Hash[full_values.map {|x| [x[0].to_s.upcase, x[1]] }]
         end
       end
     end
