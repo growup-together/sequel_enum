@@ -19,22 +19,14 @@ Or install it yourself as:
 ## Usage
 
 ```ruby
-# frozen_string_literal: true
 class ChildrenInvitee < Sequel::Model
   plugin :enum
-  many_to_one :child
-  many_to_one :invitee, class: 'Guardian'
 
   enum :status, [
     ['pending', '邀请中', 1],
     ['success', '邀请成功', 2],
     ['over_time', '已超时, 目前没用到', 3],
     ['refused', '拒绝', 4]
-  ]
-
-  enum :invitation_method, [
-    ['phone', '电话', 1],
-    ['wechat', '微信', 2]
   ]
 end
 
