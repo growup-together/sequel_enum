@@ -7,7 +7,6 @@ module Sequel
       end
 
       module ClassMethods
-
         def enums
           @enums ||= {}
         end
@@ -40,7 +39,7 @@ module Sequel
 
           values.each do |key, value|
             define_method "#{key}?" do
-              self.send(column) == key
+              self.send(column) == key.to_s
             end
           end
 
