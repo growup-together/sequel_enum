@@ -39,6 +39,7 @@ module Sequel
 
           self.enums[column] = values
           self.enums["#{column}_array".to_sym] = full_values
+          self.enums["#{column}_keys".to_sym] = Hash[full_values.map {|x| [x[0], x[1]] }]
         end
       end
     end
