@@ -1,5 +1,3 @@
-require 'hashr'
-
 module Sequel
   module Plugins
     module Enum
@@ -8,7 +6,7 @@ module Sequel
 
       module ClassMethods
         def enums
-          @enums ||= Hashr.new
+          @enums ||= {}
         end
 
         def enum(column, full_values)
