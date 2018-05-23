@@ -19,41 +19,70 @@ Or install it yourself as:
 ## Usage
 
 ```ruby
-class Item < Sequel::Model
+# frozen_string_literal: true
+class ChildrenInvitee < Sequel::Model
   plugin :enum
-  enum :condition, [:mint, :good, :poor]
+  many_to_one :child
+  many_to_one :invitee, class: 'Guardian'
+
+  enum :status, [
+    ['pending', '邀请中', 1],
+    ['success', '邀请成功', 2],
+    ['over_time', '已超时, 目前没用到', 3],
+    ['refused', '拒绝', 4]
+  ]
+
+  enum :invitation_method, [
+    ['phone', '电话', 1],
+    ['wechat', '微信', 2]
+  ]
 end
 
-item = Item.new
-item.condition = :mint
+ChildrenInvitee.enums[:status]
 
-print item.condition #> :mint
-print item.mint? #> true
-print item.good? #> false
+# =>
+# {
+#       "pending" => 1,
+#       "success" => 2,
+#     "over_time" => 3,
+#       "refused" => 4
+# }
 
-item.update(:condition => :good)
+ChildrenInvitee.enums[:status_keys] # for use with graphQL enum:
 
-print item.good? #> true
+# =>
+
+# {
+#       "PENDING" => "邀请中",
+#       "SUCCESS" => "邀请成功",
+#     "OVER_TIME" => "已超时, 目前没用到",
+#       "REFUSED" => "拒绝"
+# }
 ```
 
-```#enum``` accepts a hash like ```{ :alias => value }``` as well:
+Query in the where
 
-```ruby
-class Item < Sequel::Model
-  plugin :enum
-  enum :condition, { mint: 10, good: 11, poor: 15 }
-end
+```rb
+ChildrenInvitee.enums[:status]['pending'] # => 1
 
-item = Item.create(:condition => :mint)
+ChildrenInvitee.where(status: ChildrenInvitee.enums[:status]['pending'])
+```
 
-print item[:condition] #> 10
+Assignment only accept valid enum options.
+
+```rb
+children_invitee = ChildrenInvitee.last
+children_invitee.status # => pending
+children_invitee.status = 'success'
+children_invitee.save # => OK
+children_invitee.status = 'invalid_value' # => Exception: RuntimeError: invalid value is provided.
 ```
 
 You can set the raw value through the []= accessor:
 
 ```ruby
-item[:condition] = 15
-print item.condition #> :poor
+children_invitee[:status] = 1
+print children_invitee.status #> 'pending'
 ```
 
 ## Contributing
