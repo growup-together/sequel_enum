@@ -26,7 +26,7 @@ module Sequel
             if val
               self[column] = val && val.last
             else
-              fail 'invalid value is provided.'
+              fail "#{column}: invalid value is provided."
             end
           end
 
